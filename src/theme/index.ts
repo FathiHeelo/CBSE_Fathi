@@ -1,0 +1,2 @@
+export { catalogTheme } from './theme';
+
