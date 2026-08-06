@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
 import App from './App';
-import { catalogTheme } from './theme';
+import { yumTaDumTheme } from './theme';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider theme={catalogTheme}>
+    <ThemeProvider theme={yumTaDumTheme}>
       <CssBaseline />
       <App />
     </ThemeProvider>
   </React.StrictMode>,
 );
-

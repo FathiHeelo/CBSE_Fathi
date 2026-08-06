@@ -8,7 +8,7 @@ export default defineConfig({
     lib: {
       entry: 'src/mfe.tsx',
       formats: ['es'],
-      fileName: 'catalog-mfe',
+      fileName: 'yum-catalog',
     },
     outDir: 'dist-mfe',
     rolldownOptions: {

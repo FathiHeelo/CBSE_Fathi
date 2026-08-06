@@ -1,2 +1,1 @@
-export { catalogTheme } from './theme';
-
+export { yumTaDumTheme } from './theme';

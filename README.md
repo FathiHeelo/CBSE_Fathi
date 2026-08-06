@@ -1,6 +1,6 @@
-# Fashion Catalog & Discovery MFE
+# Yum Ta Dum - Catalog & Discovery MFE
 
-React, TypeScript, and MUI foundation for the fashion marketplace catalog microfrontend.
+Group 13's React + MUI microfrontend for restaurant discovery, menus, search, and meal selection.
 
 ## Development
 
@@ -9,12 +9,14 @@ npm install
 npm run dev
 ```
 
-Use `npm test` to verify catalog filtering and sorting, and `npm run build` for a production build.
+Use `npm test` to verify catalog data and event contracts, and `npm run build` for a production build.
 
-Run `npm run build:mfe` to create the standalone ES module in `dist-mfe/catalog-mfe.js`. A shell can load that script and render `<catalog-mfe></catalog-mfe>`.
+Run `npm run build:mfe` to create `dist-mfe/yum-catalog.js`. The Shell can load that ES module and render `<yum-catalog></yum-catalog>`.
 
-## Current foundation
+## Implemented catalog
 
-- Material Design theme tokens and reusable MUI component overrides
-- Typed fashion marketplace data in `src/data/mockProducts.json`
-- Local catalog state with debounced search, filters, sorting, and product mutations
+- Approved Yum Ta Dum MUI theme and component overrides
+- Home discovery, restaurant list, restaurant menu/detail, and search routes
+- Canonical restaurant and meal dataset with tested search, filters, and sorting
+- Strict `cart:add-item` and `navigation:requested` event dispatchers
+- Standalone app plus `<yum-catalog>` Web Component build

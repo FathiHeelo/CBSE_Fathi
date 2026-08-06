@@ -3,6 +3,8 @@ dist
 dist-mfe
 .vite
 coverage
+*.log
+.chrome-qa-*
 *.tsbuildinfo
 *.local
 .env

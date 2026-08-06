@@ -1,0 +1,4 @@
+export function formatILS(value: number): string {
+  return `₪${value.toFixed(2)}`;
+}
+

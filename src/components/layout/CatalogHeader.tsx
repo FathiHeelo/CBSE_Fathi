@@ -12,9 +12,11 @@ import {
   MenuItem,
   Stack,
   Toolbar,
-  Typography,
 } from '@mui/material';
 import { useState } from 'react';
+
+import { BrandLogo } from '../brand/BrandLogo';
+import { dispatchNavigationRequested } from '../../events/dispatchers';
 
 interface CatalogHeaderProps {
   onNavigate: (path: string) => void;
@@ -54,30 +56,23 @@ export function CatalogHeader({ onNavigate }: CatalogHeaderProps) {
             onClose={() => setMenuAnchor(null)}
           >
             <MenuItem onClick={() => navigateFromMenu('/')}>Home</MenuItem>
-            <MenuItem onClick={() => navigateFromMenu('/products')}>Shop</MenuItem>
+            <MenuItem onClick={() => navigateFromMenu('/restaurants')}>Restaurants</MenuItem>
+            <MenuItem onClick={() => navigateFromMenu('/search')}>Search</MenuItem>
           </Menu>
           <Button color="inherit" sx={{ minWidth: 0, px: 0 }} onClick={() => onNavigate('/')}>
-            <Stack alignItems="center" direction="row" spacing={1.25}>
-              <Box sx={{ bgcolor: 'primary.main', borderRadius: '10px 2px 10px 2px', height: 30, transform: 'rotate(-5deg)', width: 30 }} />
-              <Typography fontWeight={800} letterSpacing="-0.04em" variant="h5">Modeva</Typography>
-            </Stack>
+            <BrandLogo size={52} />
           </Button>
           <Stack direction="row" spacing={0.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 5 }}>
             <Button color="inherit" onClick={() => onNavigate('/')}>Home</Button>
-            <Button color="inherit" onClick={() => onNavigate('/products')}>Shop</Button>
+            <Button color="inherit" onClick={() => onNavigate('/restaurants')}>Restaurants</Button>
+            <Button color="inherit" onClick={() => onNavigate('/search')}>Search</Button>
           </Stack>
           <Box sx={{ flex: 1 }} />
           <Button
             aria-label="Open shopping bag"
             color="inherit"
             startIcon={<ShoppingBagOutlinedIcon />}
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent('catalog:navigate', {
-                detail: { path: '/cart' },
-                bubbles: true,
-                composed: true,
-              }));
-            }}
+            onClick={() => dispatchNavigationRequested('/cart')}
           >
             <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Bag</Box>
           </Button>

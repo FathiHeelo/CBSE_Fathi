@@ -18,7 +18,7 @@ export function SearchBar({
   value,
   onChange,
   onSubmit,
-  placeholder = 'Search clothing, shoes, and accessories',
+  placeholder = 'Search restaurants or meals',
   size = 'medium',
   fullWidth = true,
 }: SearchBarProps) {
@@ -31,7 +31,7 @@ export function SearchBar({
     <form role="search" onSubmit={handleSubmit}>
       <TextField
         fullWidth={fullWidth}
-        inputProps={{ 'aria-label': 'Search products' }}
+        inputProps={{ 'aria-label': 'Search restaurants and meals' }}
         placeholder={placeholder}
         size={size}
         value={value}

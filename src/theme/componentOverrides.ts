@@ -7,12 +7,18 @@ export const componentOverrides: Components<Omit<Theme, 'components'>> = {
       html: { scrollBehavior: 'smooth' },
       body: { margin: 0, minWidth: 320 },
       img: { display: 'block', maxWidth: '100%' },
+      ':focus-visible': { outline: '3px solid #F57C00', outlineOffset: 2 },
+      '@media (prefers-reduced-motion: reduce)': {
+        '*': { animationDuration: '0.01ms !important', scrollBehavior: 'auto !important', transitionDuration: '0.01ms !important' },
+      },
     },
   },
   MuiButton: {
     defaultProps: { disableElevation: true },
     styleOverrides: {
-      root: { minHeight: 40, borderRadius: 999, paddingInline: 20 },
+      root: { minHeight: 44, borderRadius: 12, paddingInline: 20 },
+      containedPrimary: { '&:hover': { backgroundColor: '#1B5E20' } },
+      containedSecondary: { '&:hover': { backgroundColor: '#E65100' } },
     },
   },
   MuiCard: {
@@ -22,12 +28,13 @@ export const componentOverrides: Components<Omit<Theme, 'components'>> = {
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 16,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         backgroundImage: 'none',
       },
     },
   },
   MuiChip: {
-    styleOverrides: { root: { borderRadius: 8, fontWeight: 600 } },
+    styleOverrides: { root: { borderRadius: 999, fontWeight: 600 } },
   },
   MuiTextField: {
     defaultProps: { variant: 'outlined' },
@@ -35,8 +42,13 @@ export const componentOverrides: Components<Omit<Theme, 'components'>> = {
   MuiOutlinedInput: {
     styleOverrides: { root: { borderRadius: 12 } },
   },
+  MuiDialog: {
+    styleOverrides: { paper: { borderRadius: 20 } },
+  },
+  MuiPaper: {
+    styleOverrides: { root: { backgroundImage: 'none' } },
+  },
   MuiSlider: {
     styleOverrides: { thumb: { width: 20, height: 20 } },
   },
 };
-

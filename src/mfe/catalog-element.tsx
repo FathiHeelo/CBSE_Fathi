@@ -4,9 +4,9 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { createRoot, type Root } from 'react-dom/client';
 
 import App from '../App';
-import { catalogTheme } from '../theme';
+import { yumTaDumTheme } from '../theme';
 
-const ELEMENT_NAME = 'catalog-mfe';
+const ELEMENT_NAME = 'yum-catalog';
 
 class CatalogMfeElement extends HTMLElement {
   private reactRoot?: Root;
@@ -24,11 +24,11 @@ class CatalogMfeElement extends HTMLElement {
     if (!this.mountPoint.isConnected) shadowRoot.appendChild(this.mountPoint);
 
     const emotionCache = createCache({
-      key: 'catalog-mfe',
+      key: 'yum-catalog',
       container: shadowRoot,
       prepend: true,
     });
-    const portalTheme = createTheme(catalogTheme, {
+    const portalTheme = createTheme(yumTaDumTheme, {
       components: {
         MuiModal: { defaultProps: { container: this.mountPoint } },
         MuiPopover: { defaultProps: { container: this.mountPoint } },
@@ -41,7 +41,7 @@ class CatalogMfeElement extends HTMLElement {
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={portalTheme}>
           <CssBaseline />
-          <App />
+          <App embedded />
         </ThemeProvider>
       </CacheProvider>,
     );
@@ -58,4 +58,3 @@ export function registerCatalogElement() {
     customElements.define(ELEMENT_NAME, CatalogMfeElement);
   }
 }
-

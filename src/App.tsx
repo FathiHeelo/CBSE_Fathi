@@ -1,36 +1,58 @@
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CatalogFooter } from './components/layout/CatalogFooter';
 import { CatalogHeader } from './components/layout/CatalogHeader';
-import { useCatalogState } from './hooks/useCatalogState';
+import {
+  getMealsByRestaurantId,
+  getRestaurantById,
+  meals,
+  restaurants,
+  type MealItem,
+  type Restaurant,
+} from './data/mockData';
+import { dispatchCartAddItem } from './events/dispatchers';
 import { useCatalogNavigation } from './hooks/useCatalogNavigation';
-import type { Product } from './types/product';
-import { dispatchAddToCart } from './utils/catalogEvents';
+import { useRestaurantSearch } from './hooks/useRestaurantSearch';
+import type { CatalogStatus } from './types/catalog';
 import { HomeView } from './views/HomeView';
-import { PDPView } from './views/PDPView';
-import { PLPView } from './views/PLPView';
+import { RestaurantDetailView } from './views/RestaurantDetailView';
+import { RestaurantListView } from './views/RestaurantListView';
+import { SearchResultsView } from './views/SearchResultsView';
 
-export default function App() {
-  const catalog = useCatalogState();
-  const { route, navigate } = useCatalogNavigation();
+export interface AppProps {
+  embedded?: boolean;
+}
+
+export default function App({ embedded = false }: AppProps) {
+  const status: CatalogStatus = 'ready';
+  const search = useRestaurantSearch(restaurants, meals);
+  const { route, searchParams, navigate } = useCatalogNavigation({ embedded });
   const [cartMessage, setCartMessage] = useState('');
+  const urlQuery = searchParams.get('q') ?? '';
 
-  const viewDetails = (product: Product) => navigate(`/products/${encodeURIComponent(product.slug)}`);
+  useEffect(() => {
+    if (route.name !== 'search') return;
+    search.setQuery(urlQuery);
+  }, [route.name, search.setQuery, urlQuery]);
 
-  const addToCart = (
-    product: Product,
-    quantity = 1,
-    options: { size?: string; color?: string } = {},
-  ) => {
-    dispatchAddToCart(product, quantity, options);
-    setCartMessage(`${quantity} × ${product.title} added to your bag`);
+  const viewRestaurant = (restaurant: Restaurant) => {
+    navigate(`/restaurants/${encodeURIComponent(restaurant.restaurantId)}`);
+  };
+
+  const addMeal = (meal: MealItem) => {
+    dispatchCartAddItem(meal);
+    setCartMessage(`${meal.name} added to your cart`);
   };
 
   const browseCategory = (category: string) => {
-    catalog.resetFilters();
-    catalog.setFilter('category', category);
-    navigate('/products');
+    search.setCategory(category);
+    navigate('/restaurants');
+  };
+
+  const submitSearch = () => {
+    const query = search.query.trim();
+    navigate(query ? `/search?q=${encodeURIComponent(query)}` : '/search');
   };
 
   let content;
@@ -38,49 +60,54 @@ export default function App() {
   if (route.name === 'home') {
     content = (
       <HomeView
-        categories={catalog.categories}
-        products={catalog.products}
-        searchTerm={catalog.searchTerm}
-        onAddToCart={addToCart}
+        categories={search.categories}
+        query={search.query}
+        restaurants={restaurants}
+        status={status}
+        onBrowseAll={() => navigate('/restaurants')}
         onBrowseCategory={browseCategory}
-        onSearchChange={catalog.setSearchTerm}
-        onShopAll={() => navigate('/products')}
-        onViewDetails={viewDetails}
+        onQueryChange={search.setQuery}
+        onSearch={submitSearch}
+        onViewRestaurant={viewRestaurant}
       />
     );
-  } else if (route.name === 'products') {
+  } else if (route.name === 'restaurants') {
     content = (
-      <PLPView
-        brands={catalog.brands}
-        categories={catalog.categories}
-        filters={catalog.filters}
-        isSearchPending={catalog.isSearchPending}
-        priceBounds={catalog.priceBounds}
-        products={catalog.filteredProducts}
-        searchTerm={catalog.searchTerm}
-        sortBy={catalog.sortBy}
-        onAddToCart={addToCart}
-        onFilterChange={catalog.setFilter}
-        onResetFilters={catalog.resetFilters}
-        onSearchChange={catalog.setSearchTerm}
-        onSortChange={catalog.setSortBy}
-        onViewDetails={viewDetails}
+      <RestaurantListView
+        categories={search.categories}
+        category={search.category}
+        query={search.query}
+        restaurants={search.matchingRestaurants}
+        sortBy={search.sortBy}
+        status={status}
+        onCategoryChange={search.setCategory}
+        onQueryChange={search.setQuery}
+        onReset={search.reset}
+        onSortChange={search.setSortBy}
+        onViewRestaurant={viewRestaurant}
       />
     );
-  } else if (route.name === 'product') {
-    const product = catalog.getProductBySlug(route.slug);
-    content = product ? (
-      <PDPView
-        key={product.id}
-        product={product}
-        relatedProducts={catalog.products.filter(({ category, id }) => category === product.category && id !== product.id)}
-        onAddToCart={addToCart}
+  } else if (route.name === 'restaurant') {
+    content = (
+      <RestaurantDetailView
+        meals={getMealsByRestaurantId(route.restaurantId)}
+        restaurant={getRestaurantById(route.restaurantId)}
+        status={status}
+        onAddMeal={addMeal}
         onNavigate={navigate}
-        onQuickAdd={addToCart}
-        onViewDetails={viewDetails}
       />
-    ) : (
-      <NotFound onHome={() => navigate('/')} />
+    );
+  } else if (route.name === 'search') {
+    content = (
+      <SearchResultsView
+        meals={search.query ? search.matchingMeals : []}
+        query={search.query}
+        restaurants={search.query ? search.matchingRestaurants : []}
+        status={status}
+        onAddMeal={addMeal}
+        onQueryChange={search.setQuery}
+        onViewRestaurant={viewRestaurant}
+      />
     );
   } else {
     content = <NotFound onHome={() => navigate('/')} />;
@@ -88,9 +115,9 @@ export default function App() {
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
-      <CatalogHeader onNavigate={navigate} />
+      {!embedded && <CatalogHeader onNavigate={navigate} />}
       <Box component="main">{content}</Box>
-      <CatalogFooter />
+      {!embedded && <CatalogFooter />}
       <Snackbar autoHideDuration={3500} open={Boolean(cartMessage)} onClose={() => setCartMessage('')}>
         <Alert severity="success" variant="filled" onClose={() => setCartMessage('')}>{cartMessage}</Alert>
       </Snackbar>
@@ -102,8 +129,8 @@ function NotFound({ onHome }: { onHome: () => void }) {
   return (
     <Box sx={{ px: 3, py: 14, textAlign: 'center' }}>
       <Typography color="primary" variant="overline">404</Typography>
-      <Typography component="h1" variant="h3">This style is no longer here</Typography>
-      <Typography color="text.secondary" sx={{ my: 2 }}>Return home to keep exploring the marketplace.</Typography>
+      <Typography component="h1" variant="h3">This page is not on Yumy's map</Typography>
+      <Typography color="text.secondary" sx={{ my: 2 }}>Return home to discover restaurants and meals.</Typography>
       <Button variant="contained" onClick={onHome}>Back to home</Button>
     </Box>
   );
