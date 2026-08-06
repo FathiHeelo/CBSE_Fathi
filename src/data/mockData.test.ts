@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getMealsByRestaurantId,
   getRestaurantById,
+  isCatalogDataValid,
   meals,
   restaurants,
 } from './mockData';
@@ -35,5 +36,11 @@ describe('canonical Yum Ta Dum mock data', () => {
     expect(getRestaurantById('rest-01')?.name).toBe('Burger House');
     expect(getMealsByRestaurantId('rest-01')).toHaveLength(4);
     expect(getMealsByRestaurantId('missing')).toEqual([]);
+  });
+
+  it('validates the runtime dataset before leaving the loading state', () => {
+    expect(isCatalogDataValid()).toBe(true);
+    expect(isCatalogDataValid([], meals)).toBe(false);
+    expect(isCatalogDataValid(restaurants, [])).toBe(false);
   });
 });

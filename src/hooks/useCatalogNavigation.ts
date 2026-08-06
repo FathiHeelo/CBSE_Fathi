@@ -14,7 +14,7 @@ interface NavigationLocation {
   search: string;
 }
 
-function resolveRoute(pathname: string): CatalogRoute {
+export function resolveCatalogRoute(pathname: string): CatalogRoute {
   const path = pathname.replace(/\/+$/, '') || '/';
 
   if (path === '/') return { name: 'home' };
@@ -57,7 +57,7 @@ export function useCatalogNavigation({ embedded = false } = {}) {
   }, [embedded]);
 
   return {
-    route: useMemo(() => resolveRoute(location.pathname), [location.pathname]),
+    route: useMemo(() => resolveCatalogRoute(location.pathname), [location.pathname]),
     searchParams: useMemo(() => new URLSearchParams(location.search), [location.search]),
     navigate,
   };

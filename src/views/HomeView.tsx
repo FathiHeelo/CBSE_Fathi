@@ -1,4 +1,4 @@
-import { ArrowForwardRounded, DeliveryDiningOutlined, LocalOfferOutlined, SearchRounded } from '@mui/icons-material';
+import { ArrowForwardOutlined, DeliveryDiningOutlined, LocalOfferOutlined, SearchOutlined } from '@mui/icons-material';
 import { Box, Button, Chip, Container, Grid, Stack, Typography } from '@mui/material';
 
 import { RestaurantCard } from '../components/catalog/RestaurantCard';
@@ -6,6 +6,7 @@ import { SearchBar } from '../components/catalog/SearchBar';
 import { YumyState } from '../components/catalog/YumyState';
 import type { Restaurant } from '../data/mockData';
 import type { CatalogStatus } from '../types/catalog';
+import { applyCatalogImageFallback } from '../utils/imageFallback';
 
 interface HomeViewProps {
   status: CatalogStatus;
@@ -17,6 +18,7 @@ interface HomeViewProps {
   onBrowseAll: () => void;
   onBrowseCategory: (category: string) => void;
   onViewRestaurant: (restaurant: Restaurant) => void;
+  onRetry: () => void;
 }
 
 export function HomeView({
@@ -29,9 +31,10 @@ export function HomeView({
   onBrowseAll,
   onBrowseCategory,
   onViewRestaurant,
+  onRetry,
 }: HomeViewProps) {
   if (status === 'loading') return <YumyState type="loading" />;
-  if (status === 'error') return <YumyState type="error" />;
+  if (status === 'error') return <YumyState actionLabel="Try again" type="error" onAction={onRetry} />;
   if (restaurants.length === 0) return <YumyState type="empty" message="No restaurants are available right now." />;
 
   const heroRestaurant = restaurants[1] ?? restaurants[0];
@@ -45,7 +48,7 @@ export function HomeView({
             <Grid item md={6} xs={12}>
               <Stack alignItems="flex-start" spacing={3}>
                 <Chip color="secondary" icon={<DeliveryDiningOutlined />} label="Fresh food, delivered locally" />
-                <Typography component="h1" sx={{ fontSize: { xs: 36, md: 52 }, lineHeight: 1.1, maxWidth: 650 }}>
+                <Typography component="h1" sx={{ fontSize: 32, fontWeight: 700, lineHeight: 1.2, maxWidth: 650 }}>
                   What are you craving today?
                 </Typography>
                 <Typography color="text.secondary" sx={{ maxWidth: 560 }}>
@@ -54,14 +57,14 @@ export function HomeView({
                 <Box sx={{ maxWidth: 620, width: '100%' }}>
                   <SearchBar placeholder="Search restaurants or meals" value={query} onChange={onQueryChange} onSubmit={onSearch} />
                 </Box>
-                <Button color="secondary" endIcon={<SearchRounded />} size="large" variant="contained" onClick={onSearch}>
+                <Button color="secondary" endIcon={<SearchOutlined />} size="large" variant="contained" onClick={onSearch}>
                   Find food
                 </Button>
               </Stack>
             </Grid>
             <Grid item md={6} xs={12}>
               <Box sx={{ mx: 'auto', maxWidth: 540, position: 'relative' }}>
-                <Box alt={`${heroRestaurant.name} featured food`} component="img" src={heroRestaurant.image} sx={{ aspectRatio: '4 / 3', borderRadius: 4, boxShadow: '0 10px 30px rgba(46,125,50,0.18)', objectFit: 'cover', width: '100%' }} />
+                <Box alt={`${heroRestaurant.name} featured food`} component="img" src={heroRestaurant.image} sx={{ aspectRatio: '4 / 3', borderRadius: 4, boxShadow: '0 10px 30px rgba(46,125,50,0.18)', objectFit: 'cover', width: '100%' }} onError={(event) => applyCatalogImageFallback(event.currentTarget)} />
                 <Box sx={{ bgcolor: 'background.paper', borderRadius: 3, bottom: 18, boxShadow: 2, left: 18, p: 2, position: 'absolute' }}>
                   <Typography fontWeight={700}>{heroRestaurant.name}</Typography>
                   <Typography color="text.secondary" variant="body2">⭐ {heroRestaurant.rating} · {heroRestaurant.deliveryEstimate}</Typography>
@@ -79,7 +82,7 @@ export function HomeView({
               <Typography color="primary" variant="overline">Explore cuisines</Typography>
               <Typography component="h2" variant="h2">Popular categories</Typography>
             </Box>
-            <Button endIcon={<ArrowForwardRounded />} onClick={onBrowseAll}>All restaurants</Button>
+            <Button endIcon={<ArrowForwardOutlined />} onClick={onBrowseAll}>All restaurants</Button>
           </Stack>
           <Stack direction="row" flexWrap="wrap" gap={1.25}>
             {categories.filter((category) => category !== 'All').slice(0, 12).map((category) => (
@@ -94,7 +97,7 @@ export function HomeView({
               <Typography color="primary" variant="overline">Yumy recommends</Typography>
               <Typography component="h2" variant="h2">Featured restaurants</Typography>
             </Box>
-            <Button endIcon={<ArrowForwardRounded />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} onClick={onBrowseAll}>View all</Button>
+            <Button endIcon={<ArrowForwardOutlined />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} onClick={onBrowseAll}>View all</Button>
           </Stack>
           <Grid container spacing={3}>
             {featured.map((restaurant) => (
@@ -116,7 +119,7 @@ export function HomeView({
                 <Typography>Discover participating restaurants and enjoy more of what you love.</Typography>
               </Box>
             </Stack>
-            <Button color="inherit" endIcon={<ArrowForwardRounded />} variant="outlined" onClick={onBrowseAll}>Browse offers</Button>
+            <Button color="inherit" endIcon={<ArrowForwardOutlined />} variant="outlined" onClick={onBrowseAll}>Browse offers</Button>
           </Stack>
         </Container>
       </Box>

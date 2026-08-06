@@ -1,8 +1,8 @@
 import {
-  CloseRounded as CloseRoundedIcon,
-  SearchRounded as SearchRoundedIcon,
+  CloseOutlined as CloseOutlinedIcon,
+  SearchOutlined as SearchOutlinedIcon,
 } from '@mui/icons-material';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import type { FormEvent } from 'react';
 
 interface SearchBarProps {
@@ -12,6 +12,7 @@ interface SearchBarProps {
   placeholder?: string;
   size?: 'small' | 'medium';
   fullWidth?: boolean;
+  loading?: boolean;
 }
 
 export function SearchBar({
@@ -21,6 +22,7 @@ export function SearchBar({
   placeholder = 'Search restaurants or meals',
   size = 'medium',
   fullWidth = true,
+  loading = false,
 }: SearchBarProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,13 +41,17 @@ export function SearchBar({
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchRoundedIcon color="action" />
+              <SearchOutlinedIcon color="action" />
             </InputAdornment>
           ),
-          endAdornment: value ? (
+          endAdornment: loading ? (
+            <InputAdornment position="end">
+              <CircularProgress aria-label="Updating search results" size={20} />
+            </InputAdornment>
+          ) : value ? (
             <InputAdornment position="end">
               <IconButton aria-label="Clear search" edge="end" size="small" onClick={() => onChange('')}>
-                <CloseRoundedIcon fontSize="small" />
+                <CloseOutlinedIcon fontSize="small" />
               </IconButton>
             </InputAdornment>
           ) : undefined,
@@ -53,7 +59,7 @@ export function SearchBar({
         sx={{
           '& .MuiOutlinedInput-root': {
             bgcolor: 'background.paper',
-            borderRadius: 999,
+            borderRadius: '12px',
           },
         }}
       />

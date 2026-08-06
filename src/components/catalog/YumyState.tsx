@@ -3,19 +3,21 @@ import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material'
 import { BrandLogo } from '../brand/BrandLogo';
 
 interface YumyStateProps {
-  type: 'loading' | 'empty' | 'error';
+  type: 'loading' | 'empty' | 'error' | 'success';
   title?: string;
   message?: string;
-  onRetry?: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 const defaults = {
   loading: { title: 'Yumy is preparing your choices', message: 'Loading delicious options…' },
   empty: { title: 'Yumy found no matches', message: 'Try another search or clear a filter.' },
   error: { title: 'Yumy hit a small problem', message: 'We could not load the catalog. Please try again.' },
+  success: { title: 'Yumy says it is done', message: 'Your action was completed successfully.' },
 };
 
-export function YumyState({ type, title, message, onRetry }: YumyStateProps) {
+export function YumyState({ type, title, message, actionLabel, onAction }: YumyStateProps) {
   const copy = defaults[type];
 
   return (
@@ -33,7 +35,7 @@ export function YumyState({ type, title, message, onRetry }: YumyStateProps) {
       </Box>
       <Typography component="h2" variant="h3">{title ?? copy.title}</Typography>
       <Typography color="text.secondary" sx={{ maxWidth: 440 }}>{message ?? copy.message}</Typography>
-      {type === 'error' && onRetry && <Button variant="contained" onClick={onRetry}>Try again</Button>}
+      {onAction && <Button variant="contained" onClick={onAction}>{actionLabel ?? (type === 'error' ? 'Try again' : 'Continue')}</Button>}
     </Stack>
   );
 }

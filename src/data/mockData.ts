@@ -362,3 +362,13 @@ export function getRestaurantById(restaurantId: string): Restaurant | undefined 
 export function getMealsByRestaurantId(restaurantId: string): MealItem[] {
   return meals.filter((meal) => meal.restaurantId === restaurantId);
 }
+
+export function isCatalogDataValid(
+  sourceRestaurants: readonly Restaurant[] = restaurants,
+  sourceMeals: readonly MealItem[] = meals,
+): boolean {
+  if (sourceRestaurants.length === 0 || sourceMeals.length === 0) return false;
+
+  const restaurantIds = new Set(sourceRestaurants.map((restaurant) => restaurant.restaurantId));
+  return sourceMeals.every((meal) => restaurantIds.has(meal.restaurantId));
+}

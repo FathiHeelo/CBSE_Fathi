@@ -1,5 +1,5 @@
 import {
-  MenuRounded as MenuRoundedIcon,
+  MenuOutlined as MenuOutlinedIcon,
   ShoppingBagOutlined as ShoppingBagOutlinedIcon,
 } from '@mui/icons-material';
 import {
@@ -47,7 +47,7 @@ export function CatalogHeader({ onNavigate }: CatalogHeaderProps) {
             sx={{ display: { md: 'none' }, mr: 1 }}
             onClick={(event) => setMenuAnchor(event.currentTarget)}
           >
-            <MenuRoundedIcon />
+            <MenuOutlinedIcon />
           </IconButton>
           <Menu
             anchorEl={menuAnchor}

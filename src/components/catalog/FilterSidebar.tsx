@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select, Stack, ToggleButton, ToggleB
 
 import type { RestaurantSortOption } from '../../hooks/useRestaurantSearch';
 
-interface RestaurantFiltersProps {
+interface FilterSidebarProps {
   categories: string[];
   category: string;
   sortBy: RestaurantSortOption;
@@ -10,9 +10,15 @@ interface RestaurantFiltersProps {
   onSortChange: (sort: RestaurantSortOption) => void;
 }
 
-export function RestaurantFilters({ categories, category, sortBy, onCategoryChange, onSortChange }: RestaurantFiltersProps) {
+export function FilterSidebar({ categories, category, sortBy, onCategoryChange, onSortChange }: FilterSidebarProps) {
   return (
-    <Stack alignItems={{ xs: 'stretch', md: 'center' }} direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
+    <Stack
+      alignItems={{ xs: 'stretch', md: 'center' }}
+      component="aside"
+      direction={{ xs: 'column', md: 'row' }}
+      justifyContent="space-between"
+      spacing={2}
+    >
       <ToggleButtonGroup
         exclusive
         aria-label="Restaurant category"
@@ -35,4 +41,3 @@ export function RestaurantFilters({ categories, category, sortBy, onCategoryChan
     </Stack>
   );
 }
-

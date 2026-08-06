@@ -1,11 +1,14 @@
-import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import { BrandLogo } from './components/brand/BrandLogo';
+import { YumyState } from './components/catalog/YumyState';
 import { CatalogFooter } from './components/layout/CatalogFooter';
 import { CatalogHeader } from './components/layout/CatalogHeader';
 import {
   getMealsByRestaurantId,
   getRestaurantById,
+  isCatalogDataValid,
   meals,
   restaurants,
   type MealItem,
@@ -25,11 +28,25 @@ export interface AppProps {
 }
 
 export default function App({ embedded = false }: AppProps) {
-  const status: CatalogStatus = 'ready';
+  const [status, setStatus] = useState<CatalogStatus>('loading');
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const search = useRestaurantSearch(restaurants, meals);
   const { route, searchParams, navigate } = useCatalogNavigation({ embedded });
   const [cartMessage, setCartMessage] = useState('');
   const urlQuery = searchParams.get('q') ?? '';
+
+  useEffect(() => {
+    setStatus('loading');
+    const timeoutId = window.setTimeout(() => {
+      try {
+        setStatus(isCatalogDataValid() ? 'ready' : 'error');
+      } catch {
+        setStatus('error');
+      }
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [loadAttempt]);
 
   useEffect(() => {
     if (route.name !== 'search') return;
@@ -55,6 +72,8 @@ export default function App({ embedded = false }: AppProps) {
     navigate(query ? `/search?q=${encodeURIComponent(query)}` : '/search');
   };
 
+  const retryCatalog = () => setLoadAttempt((attempt) => attempt + 1);
+
   let content;
 
   if (route.name === 'home') {
@@ -67,6 +86,7 @@ export default function App({ embedded = false }: AppProps) {
         onBrowseAll={() => navigate('/restaurants')}
         onBrowseCategory={browseCategory}
         onQueryChange={search.setQuery}
+        onRetry={retryCatalog}
         onSearch={submitSearch}
         onViewRestaurant={viewRestaurant}
       />
@@ -76,6 +96,7 @@ export default function App({ embedded = false }: AppProps) {
       <RestaurantListView
         categories={search.categories}
         category={search.category}
+        isSearchPending={search.isSearchPending}
         query={search.query}
         restaurants={search.matchingRestaurants}
         sortBy={search.sortBy}
@@ -83,6 +104,7 @@ export default function App({ embedded = false }: AppProps) {
         onCategoryChange={search.setCategory}
         onQueryChange={search.setQuery}
         onReset={search.reset}
+        onRetry={retryCatalog}
         onSortChange={search.setSortBy}
         onViewRestaurant={viewRestaurant}
       />
@@ -95,17 +117,20 @@ export default function App({ embedded = false }: AppProps) {
         status={status}
         onAddMeal={addMeal}
         onNavigate={navigate}
+        onRetry={retryCatalog}
       />
     );
   } else if (route.name === 'search') {
     content = (
       <SearchResultsView
         meals={search.query ? search.matchingMeals : []}
+        isSearchPending={search.isSearchPending}
         query={search.query}
         restaurants={search.query ? search.matchingRestaurants : []}
         status={status}
         onAddMeal={addMeal}
         onQueryChange={search.setQuery}
+        onRetry={retryCatalog}
         onViewRestaurant={viewRestaurant}
       />
     );
@@ -119,7 +144,7 @@ export default function App({ embedded = false }: AppProps) {
       <Box component="main">{content}</Box>
       {!embedded && <CatalogFooter />}
       <Snackbar autoHideDuration={3500} open={Boolean(cartMessage)} onClose={() => setCartMessage('')}>
-        <Alert severity="success" variant="filled" onClose={() => setCartMessage('')}>{cartMessage}</Alert>
+        <Alert icon={<BrandLogo showName={false} size={32} />} severity="success" variant="filled" onClose={() => setCartMessage('')}>{cartMessage}</Alert>
       </Snackbar>
     </Box>
   );
@@ -127,11 +152,12 @@ export default function App({ embedded = false }: AppProps) {
 
 function NotFound({ onHome }: { onHome: () => void }) {
   return (
-    <Box sx={{ px: 3, py: 14, textAlign: 'center' }}>
-      <Typography color="primary" variant="overline">404</Typography>
-      <Typography component="h1" variant="h3">This page is not on Yumy's map</Typography>
-      <Typography color="text.secondary" sx={{ my: 2 }}>Return home to discover restaurants and meals.</Typography>
-      <Button variant="contained" onClick={onHome}>Back to home</Button>
-    </Box>
+    <YumyState
+      actionLabel="Back to home"
+      message="Return home to discover restaurants and meals."
+      title="This page is not on Yumy's map"
+      type="empty"
+      onAction={onHome}
+    />
   );
 }

@@ -12,12 +12,14 @@ interface SearchResultsViewProps {
   query: string;
   restaurants: readonly Restaurant[];
   meals: readonly MealItem[];
+  isSearchPending: boolean;
   onQueryChange: (query: string) => void;
   onViewRestaurant: (restaurant: Restaurant) => void;
   onAddMeal: (meal: MealItem) => void;
+  onRetry: () => void;
 }
 
-export function SearchResultsView({ status, query, restaurants, meals, onQueryChange, onViewRestaurant, onAddMeal }: SearchResultsViewProps) {
+export function SearchResultsView({ status, query, restaurants, meals, isSearchPending, onQueryChange, onViewRestaurant, onAddMeal, onRetry }: SearchResultsViewProps) {
   const hasResults = restaurants.length > 0 || meals.length > 0;
 
   return (
@@ -25,12 +27,12 @@ export function SearchResultsView({ status, query, restaurants, meals, onQueryCh
       <Typography color="primary" variant="overline">Search Yum Ta Dum</Typography>
       <Typography component="h1" variant="h1">Find restaurants and meals</Typography>
       <Box sx={{ my: 3, maxWidth: 720 }}>
-        <SearchBar placeholder="Try burger, sushi, Palestinian…" value={query} onChange={onQueryChange} />
+        <SearchBar loading={isSearchPending} placeholder="Try burger, sushi, Palestinian…" value={query} onChange={onQueryChange} />
       </Box>
 
-      {status === 'loading' ? <YumyState type="loading" /> : status === 'error' ? <YumyState type="error" /> : !query ? (
+      {status === 'loading' ? <YumyState type="loading" /> : status === 'error' ? <YumyState actionLabel="Try again" type="error" onAction={onRetry} /> : !query ? (
         <YumyState type="empty" title="What sounds good?" message="Enter a restaurant, cuisine, or meal name to start searching." />
-      ) : !hasResults ? <YumyState type="empty" /> : (
+      ) : !hasResults ? <YumyState actionLabel="Clear search" type="empty" onAction={() => onQueryChange('')} /> : (
         <>
           {restaurants.length > 0 && (
             <Box component="section" sx={{ mt: 5 }}>
@@ -61,4 +63,3 @@ export function SearchResultsView({ status, query, restaurants, meals, onQueryCh
     </Container>
   );
 }
-

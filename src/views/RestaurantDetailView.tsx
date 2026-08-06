@@ -1,10 +1,11 @@
-import { AccessTimeOutlined, ArrowBackRounded, StarRounded } from '@mui/icons-material';
+import { AccessTimeOutlined, ArrowBackOutlined, StarOutline } from '@mui/icons-material';
 import { Box, Breadcrumbs, Button, Chip, Container, Grid, Link, Stack, Typography } from '@mui/material';
 
 import { MealCard } from '../components/catalog/MealCard';
 import { YumyState } from '../components/catalog/YumyState';
 import type { MealItem, Restaurant } from '../data/mockData';
 import type { CatalogStatus } from '../types/catalog';
+import { applyCatalogImageFallback } from '../utils/imageFallback';
 
 interface RestaurantDetailViewProps {
   status: CatalogStatus;
@@ -12,12 +13,13 @@ interface RestaurantDetailViewProps {
   meals: readonly MealItem[];
   onNavigate: (route: string) => void;
   onAddMeal: (meal: MealItem) => void;
+  onRetry: () => void;
 }
 
-export function RestaurantDetailView({ status, restaurant, meals, onNavigate, onAddMeal }: RestaurantDetailViewProps) {
+export function RestaurantDetailView({ status, restaurant, meals, onNavigate, onAddMeal, onRetry }: RestaurantDetailViewProps) {
   if (status === 'loading') return <YumyState type="loading" />;
-  if (status === 'error') return <YumyState type="error" />;
-  if (!restaurant) return <YumyState type="empty" title="Restaurant not found" message="This restaurant is not in the Yum Ta Dum catalog." />;
+  if (status === 'error') return <YumyState actionLabel="Try again" type="error" onAction={onRetry} />;
+  if (!restaurant) return <YumyState actionLabel="Browse restaurants" type="empty" title="Restaurant not found" message="This restaurant is not in the Yum Ta Dum catalog." onAction={() => onNavigate('/restaurants')} />;
 
   const groupedMeals = meals.reduce<Record<string, MealItem[]>>((groups, meal) => {
     (groups[meal.category] ??= []).push(meal);
@@ -27,12 +29,12 @@ export function RestaurantDetailView({ status, restaurant, meals, onNavigate, on
   return (
     <>
       <Box sx={{ height: { xs: 260, md: 380 }, overflow: 'hidden', position: 'relative' }}>
-        <Box alt={`${restaurant.name} food`} component="img" src={restaurant.image} sx={{ height: '100%', objectFit: 'cover', width: '100%' }} />
+        <Box alt={`${restaurant.name} food`} component="img" src={restaurant.image} sx={{ height: '100%', objectFit: 'cover', width: '100%' }} onError={(event) => applyCatalogImageFallback(event.currentTarget)} />
         <Box sx={{ background: 'linear-gradient(transparent 30%, rgba(0,0,0,.78))', inset: 0, position: 'absolute' }} />
         <Container maxWidth="xl" sx={{ bottom: 0, color: 'common.white', left: 0, pb: 4, position: 'absolute', right: 0 }}>
-          <Typography component="h1" sx={{ fontSize: { xs: 32, md: 44 } }}>{restaurant.name}</Typography>
+          <Typography component="h1" sx={{ fontSize: 32, fontWeight: 700, lineHeight: 1.25 }}>{restaurant.name}</Typography>
           <Stack alignItems="center" direction="row" flexWrap="wrap" gap={1.5} sx={{ mt: 1 }}>
-            <Chip icon={<StarRounded />} label={`${restaurant.rating.toFixed(1)} rating`} sx={{ bgcolor: 'background.paper' }} />
+            <Chip icon={<StarOutline />} label={`${restaurant.rating.toFixed(1)} rating`} sx={{ bgcolor: 'background.paper' }} />
             <Chip icon={<AccessTimeOutlined />} label={restaurant.deliveryEstimate} sx={{ bgcolor: 'background.paper' }} />
             <Typography>{restaurant.cuisine}</Typography>
           </Stack>
@@ -63,9 +65,8 @@ export function RestaurantDetailView({ status, restaurant, meals, onNavigate, on
           </Box>
         ))}
 
-        <Button startIcon={<ArrowBackRounded />} sx={{ mt: 6 }} onClick={() => onNavigate('/restaurants')}>Back to restaurants</Button>
+        <Button startIcon={<ArrowBackOutlined />} sx={{ mt: 6 }} onClick={() => onNavigate('/restaurants')}>Back to restaurants</Button>
       </Container>
     </>
   );
 }
-
