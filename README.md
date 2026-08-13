@@ -5,7 +5,8 @@ Group 13's React + MUI microfrontend for restaurant discovery, menus, search, an
 ## URLs and routes
 
 - Local development: `http://127.0.0.1:5173/`
-- Live deployment: pending publication by the Yum Ta Dum Shell/deployment owner
+- Standalone live URL: `https://cbse-fathi.vercel.app/`
+- MFE bundle URL: `https://cbse-fathi.vercel.app/mfe/yum-catalog.js`
 - `/` - discovery, categories, featured restaurants, and offers
 - `/restaurants` - searchable, filterable, sortable restaurant list
 - `/restaurants/:restaurantId` - restaurant details and grouped menu
@@ -28,9 +29,14 @@ npm run build:mfe
 
 ## Shell integration
 
-`npm run build:mfe` creates `dist-mfe/yum-catalog.js`. Load it as an ES module, then render:
+`npm run build` creates both the standalone application in `dist/` and the Web Component bundle at `dist/mfe/yum-catalog.js`. Load the bundle as an ES module, then render:
 
 ```html
+<script
+  type="module"
+  src="https://cbse-fathi.vercel.app/mfe/yum-catalog.js"
+></script>
+
 <yum-catalog></yum-catalog>
 ```
 

@@ -4,15 +4,15 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   build: {
-    emptyOutDir: true,
-    lib: {
-      entry: 'src/mfe.tsx',
-      formats: ['es'],
-      fileName: 'yum-catalog',
-    },
-    outDir: 'dist-mfe',
+    assetsInlineLimit: Number.POSITIVE_INFINITY,
+    emptyOutDir: false,
+    outDir: 'dist/mfe',
     rolldownOptions: {
-      output: { codeSplitting: false },
+      input: 'src/mfe.tsx',
+      output: {
+        codeSplitting: false,
+        entryFileNames: 'yum-catalog.js',
+      },
     },
     sourcemap: true,
     target: 'es2020',
