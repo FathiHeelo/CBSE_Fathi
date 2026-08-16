@@ -2,7 +2,7 @@
 
 ## 🎥 Demo
 
-![Yum Ta Dum Demo](C:\Users\asus\CBSE\CBSE_Fathi\src\assets\yum-ta-dum-demo.gif)
+![Yum Ta Dum Demo](.\src\assets\yum-ta-dum-demo.gif)
 
 ▶️ **[Watch the Full Demo Video](https://drive.google.com/file/d/1pmaWmkh4zJ5gS2fHyTUSR4Cog1W-3V1q/view?usp=sharing)**
 
