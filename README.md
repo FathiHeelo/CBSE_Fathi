@@ -7,6 +7,7 @@ Group 13's React + MUI microfrontend for restaurant discovery, menus, search, an
 - Local development: `http://127.0.0.1:5173/`
 - Standalone live URL: `https://cbse-fathi.vercel.app/`
 - MFE bundle URL: `https://cbse-fathi.vercel.app/mfe/yum-catalog.js`
+- The link of Dimo :`https://drive.google.com/file/d/1pmaWmkh4zJ5gS2fHyTUSR4Cog1W-3V1q/view?usp=sharing`
 - `/` - discovery, categories, featured restaurants, and offers
 - `/restaurants` - searchable, filterable, sortable restaurant list
 - `/restaurants/:restaurantId` - restaurant details and grouped menu
